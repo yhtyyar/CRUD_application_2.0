@@ -8,9 +8,11 @@ import service.WriterService;
 import java.util.List;
 
 public class WriterServiceImpl implements WriterService {
+    private final WriterRepository writerRepository;
 
-    private final WriterRepository writerRepository = new JdbcWriterRepositoryImpl();
-
+    public WriterServiceImpl() {
+        this.writerRepository = new JdbcWriterRepositoryImpl();
+    }
 
     @Override
     public Writer getById(Long id) {

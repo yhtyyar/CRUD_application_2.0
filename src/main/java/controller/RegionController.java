@@ -8,7 +8,12 @@ import java.util.List;
 
 public class RegionController {
 
-    private final RegionService regionService = new RegionServiceImpl();
+    private final RegionService regionService;
+
+    public RegionController () {
+        this.regionService = new RegionServiceImpl();
+    }
+
 
     public Region getById(Long id) {
         return regionService.getById(id);

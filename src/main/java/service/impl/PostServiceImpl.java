@@ -9,7 +9,11 @@ import java.util.List;
 
 public class PostServiceImpl implements PostService {
 
-    private final PostRepository postRepository = new JdbcPostRepositoryImpl();
+    private final PostRepository postRepository;
+
+    public PostServiceImpl() {
+        this.postRepository = new JdbcPostRepositoryImpl();
+    }
 
     @Override
     public Post getById(Long id) {

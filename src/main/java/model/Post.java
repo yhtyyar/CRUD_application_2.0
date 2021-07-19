@@ -1,27 +1,44 @@
 package model;
 
-import java.time.LocalDateTime;
-
 public class Post {
 
     private Long id;
     private String content;
     private Long writerId;
-    private LocalDateTime created;
-    private LocalDateTime updated;
+    private String created;
+    private String updated;
 
     public Post() {
     }
 
     public Post(String content) {
-        this.content = content;
+        if (content == null) {
+            this.content = "нет записей";
+        } else {
+            this.content = content;
+        }
     }
 
-    public Post(Long id, String content,LocalDateTime created, LocalDateTime updated, Long writerId) {
+    public Post(Long id, String content, String created, String updated, Long writerId) {
         this.id = id;
-        this.content = content;
-        this.created = created;
-        this.updated = updated;
+
+        if (content == null) {
+            this.content = "нет записей";
+        } else {
+            this.content = content;
+        }
+
+        if (created == null) {
+            this.created = "запись не создана";
+        } else {
+            this.created = created;
+        }
+
+        if (updated == null) {
+            this.created = "запись не изменена";
+        } else {
+            this.updated = updated;
+        }
         this.writerId = writerId;
     }
 
@@ -46,27 +63,40 @@ public class Post {
     }
 
     public void setContent(String content) {
-        this.content = content;
+
+        if (content == null) {
+            this.content = "Записей нет";
+        } else {
+            this.content = content;
+        }
     }
 
-    public LocalDateTime getCreated() {
+    public void setCreated(String created) {
+        if (created == null) {
+            this.created = "запись не создана";
+        } else {
+            this.created = created;
+        }
+    }
+
+    public String getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-    public LocalDateTime getUpdated() {
+    public String getUpdated() {
         return updated;
     }
 
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
+    public void setUpdated(String updated) {
+        if (updated == null) {
+            this.created = "запись не изменена";
+        } else {
+            this.updated = updated;
+        }
     }
 
     @Override
     public String toString() {
-        return  "  " + id + " | " + writerId + " | " + created + " | " + updated + " | " + content;
+        return "  " + id + " | " + writerId + " | " + created + " | " + updated + " | " + content;
     }
 }

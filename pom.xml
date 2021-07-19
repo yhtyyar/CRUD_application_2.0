@@ -11,43 +11,52 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <mysql.connector.version>8.0.21</mysql.connector.version>
+        <liquibase.connector.version>4.3.5</liquibase.connector.version>
+        <junit.connector.version>4.13.2</junit.connector.version>
+        <mockito.connector.version>3.10.0</mockito.connector.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+
+
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.connector.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${junit.connector.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.10.0</version>
+            <version>${mockito.connector.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>4.3.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.21</version>
-        </dependency>
     </dependencies>
 
 
     <build>
         <plugins>
             <plugin>
+
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.3.5</version>
+                <version>${liquibase.connector.version}</version>
 
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
@@ -58,10 +67,11 @@
                     <dependency>
                         <groupId>mysql</groupId>
                         <artifactId>mysql-connector-java</artifactId>
-                        <version>8.0.21</version>
+                        <version>${mysql.connector.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
+
         </plugins>
     </build>
 

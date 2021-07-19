@@ -8,7 +8,11 @@ import java.util.List;
 
 public class PostController {
 
-    private  final PostService postService = new PostServiceImpl();
+    private final PostService postService;
+
+    public PostController() {
+        this.postService = new PostServiceImpl();
+    }
 
     public Post getById(Long id) {
         return postService.getById(id);

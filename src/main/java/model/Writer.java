@@ -18,8 +18,19 @@ public class Writer {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.regionName = regionName;
+
+        if (regionName == null) {
+            this.regionName = new Region("регион не указан");
+        } else {
+            this.regionName = regionName;
+        }
+
+        if (posts.size() == 0) {
+            posts.add(new Post("записей нет"));
+        }
+
         this.posts = posts;
+
     }
 
 
@@ -78,18 +89,13 @@ public class Writer {
 
         StringBuilder postBuilder = new StringBuilder();
 
-        if (posts == null ) {
-            postBuilder.append("нет записей");
-        } else {
-            for (Post post : posts) {
-                postBuilder.append(post.getContent()).append(" | ");
-            }
+        for (Post post : posts) {
+            postBuilder.append(post.getContent()).append(" | ");
         }
 
 
         return "  " + id + " | " + firstName + " | " + lastName +
-                " | " + regionName.getRegionName() + " | " + postBuilder.toString();
-
+                " | " + regionName.getRegionName() + " | " + postBuilder;
 
     }
 }

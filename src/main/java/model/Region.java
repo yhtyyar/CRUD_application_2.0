@@ -53,6 +53,10 @@ public class Region {
     @Override
     public String toString() {
 
-        return "  " + id + " |  " + regionName + " | " + writerId;
+        if (regionName == null) {
+            return "  " + id + " |  " + "регион не указан" + " | " + writerId;
+        } else {
+            return "  " + id + " |  " + regionName + " | " + writerId;
+        }
     }
 }

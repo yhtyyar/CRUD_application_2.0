@@ -8,8 +8,11 @@ import java.util.List;
 
 public class WriterController {
 
-   private final WriterService writerService = new WriterServiceImpl();
+    private final WriterService writerService;
 
+    public WriterController() {
+        this.writerService = new WriterServiceImpl();
+    }
 
     public Writer getById(Long id) {
         return writerService.getById(id);

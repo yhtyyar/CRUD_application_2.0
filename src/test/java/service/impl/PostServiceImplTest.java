@@ -7,13 +7,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import repository.PostRepository;
+import repository.jdbc.JdbcPostRepositoryImpl;
 import service.PostService;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostServiceImplTest {
@@ -24,7 +25,7 @@ public class PostServiceImplTest {
     private static final Long writerId = 2L;
 
     @Mock
-    private Post post;
+    private PostRepository postRepository;
 
     @Mock
     private List<Post> postList;
@@ -35,35 +36,28 @@ public class PostServiceImplTest {
 
     @Before
     public void setUp() {
-        String str = "Just string";
-        when(post.getContent()).thenReturn(str);
-    }
-
-
-    @Test
-    public void getContentTest() {
-        assertEquals("Just string", post.getContent());
+        postRepository = new JdbcPostRepositoryImpl();
     }
 
 
     @Test
     public void getByIdTest() {
-        doReturn(post).when(postService).getById(id);
-        assertEquals(post, postService.getById(1L));
+        doReturn(postRepository.getById(id)).when(postService).getById(id);
+        assertEquals(postRepository.getById(id), postService.getById(1L));
     }
 
 
     @Test
     public void createTest() {
-        doReturn(post).when(postService).create(writerId, content);
-        assertEquals(post, postService.create(2L,content));
+        doReturn(postRepository.create(writerId, content)).when(postService).create(writerId, content);
+        assertEquals(postRepository.create(writerId, content), postService.create(2L,content));
     }
 
 
     @Test
     public void updateTest() {
-        doReturn(post).when(postService).update(id,   2L, content);
-        assertEquals(post, postService.update(1L, writerId, content ));
+        doReturn(postRepository.update(id, writerId, content)).when(postService).update(id,   2L, content);
+        assertEquals(postRepository.update(id, 2L, content), postService.update(1L, writerId, content ));
     }
 
 

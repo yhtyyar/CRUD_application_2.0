@@ -14,6 +14,7 @@ import static repository.jdbc.JdbcUtils.*;
 public class JdbcWriterRepositoryImpl implements WriterRepository {
 
     private ResultSet resultSet;
+    private final Statement statement = JdbcConnection.getConnection();
 
 
     @Override
@@ -23,28 +24,21 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
         List<Post> postList = new ArrayList<>();
 
 
-        try (Statement statement = JdbcConnection.getConnection().createStatement()) {
+        try {
 
-            resultSet = statement.executeQuery(WRITER_GET_BY_ID_FOR_POSTS + id + " ;");
+            resultSet = statement.executeQuery(String.format(WRITER_GET_BY_ID_FOR_POSTS, id));
 
             while (resultSet.next()) {
                 postList.add(new Post(resultSet.getString(1)));
             }
 
-            resultSet = statement.executeQuery(WRITER_GET_BY_ID + id + " ;");
-
+            resultSet = statement.executeQuery(String.format(WRITER_GET_BY_ID, id));
 
             if (resultSet.next()) {
 
-                if (resultSet.getString(4) == null) {
-                    writer.setRegionName(new Region("регион не указан"));
-
-                } else {
-                    writer.setRegionName(new Region(resultSet.getString(4)));
-                }
-
                 writer = new Writer(resultSet.getLong(1), resultSet.getString(2),
-                        resultSet.getString(3), writer.getRegionName(), postList);
+                        resultSet.getString(3),
+                        new Region(resultSet.getString(4)), postList);
             }
 
             resultSet.close();
@@ -63,19 +57,13 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
         Writer writer = new Writer();
         List<Post> postList = new ArrayList<>();
 
-        try (Statement statement = JdbcConnection.getConnection().createStatement()) {
+        try {
 
-            statement.execute("INSERT INTO practice.writers (first_name, last_name) " +
-                    "VALUES('" + firstName + "' , '" + lastName + "') ;");
+            statement.execute(String.format(WRITER_CREATE, firstName, lastName));
+            statement.execute(WRITER_CREATE_IN_REGION);
+            statement.execute(String.format(WRITER_CREATE_IN_POST,Timestamp.valueOf(LocalDateTime.now())));
 
-            statement.execute("INSERT INTO practice.regions (writer_id) " +
-                    "VALUES((SELECT MAX(id) FROM practice.writers)) ;");
-
-            statement.execute("INSERT INTO practice.posts (created, writer_id) " +
-                    "VALUES( \"" + Timestamp.valueOf(LocalDateTime.now()) + "\" ," +
-                    "(SELECT MAX(id) FROM practice.writers)) ;");
-
-            resultSet = statement.executeQuery(WRITER_CREATE_FOR_POSTS);
+            statement.executeQuery(WRITER_CREATE_FOR_POSTS);
 
             while (resultSet.next()) {
                 postList.add(new Post(resultSet.getString(1)));
@@ -85,15 +73,9 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
 
             if (resultSet.next()) {
 
-                if (resultSet.getString(4) == null) {
-                    writer.setRegionName(new Region("регион не указан"));
-
-                } else {
-                    writer.setRegionName(new Region(resultSet.getString(4)));
-                }
-
                 writer = new Writer(resultSet.getLong(1), resultSet.getString(2),
-                        resultSet.getString(3), writer.getRegionName(), postList);
+                        resultSet.getString(3),
+                        new Region(resultSet.getString(4)), postList);
             }
 
             resultSet.close();
@@ -112,30 +94,23 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
         Writer writer = new Writer();
         List<Post> postList = new ArrayList<>();
 
-        try (Statement statement = JdbcConnection.getConnection().createStatement()) {
+        try {
 
-            if (statement.executeUpdate("UPDATE practice.writers SET first_name = '" + firstName +
-                    "' , last_name = '" + lastName + "'  WHERE id = " + id + " ;") > 0) {
+            if (statement.executeUpdate(String.format(WRITER_UPDATE, firstName, lastName, id)) > 0) {
 
-                resultSet = statement.executeQuery(WRITER_UPDATE_FOR_POSTS + id + " ;");
+                resultSet = statement.executeQuery(String.format(WRITER_UPDATE_FOR_POSTS, id));
 
                 while (resultSet.next()) {
                     postList.add(new Post(resultSet.getString(1)));
                 }
 
-                resultSet = statement.executeQuery(RESULT_WRITER_UPDATE + id + " ;");
+                resultSet = statement.executeQuery(String.format(RESULT_WRITER_UPDATE,id));
 
                 if (resultSet.next()) {
 
-                    if (resultSet.getString(4) == null) {
-                        writer.setRegionName(new Region("регион не указан"));
-
-                    } else {
-                        writer.setRegionName(new Region(resultSet.getString(4)));
-                    }
-
                     writer = new Writer(resultSet.getLong(1), resultSet.getString(2),
-                            resultSet.getString(3), writer.getRegionName(), postList);
+                            resultSet.getString(3),
+                            new Region(resultSet.getString(4)), postList);
                 }
 
                 resultSet.close();
@@ -155,14 +130,14 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
     @Override
     public void deleteById(Long id) {
 
-        try (Statement statement = JdbcConnection.getConnection().createStatement()) {
+        try {
 
-            if (statement.executeUpdate(WRITER_DELETE + id + " ;") > 0) {
+            if (statement.executeUpdate(String.format(WRITER_DELETE, id)) > 0) {
 
-                if (statement.executeUpdate(DELETE_WRITER_ID_IN_POST + id + " ;") > 0) {
+                if (statement.executeUpdate(String.format(DELETE_WRITER_ID_IN_POST, id)) > 0) {
                     System.out.println("... ID  писателя в папке пост удален ...");
 
-                    if (statement.executeUpdate(DELETE_WRITER_ID_IN_REGION + id + " ;") > 0) {
+                    if (statement.executeUpdate(String.format(DELETE_WRITER_ID_IN_REGION, id)) > 0) {
                         System.out.println("... ID  писателя в папке регион удален ...");
 
                     } else {
@@ -196,7 +171,7 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
         List<Long> idList = new LinkedList<>();
 
 
-        try (Statement statement = JdbcConnection.getConnection().createStatement()) {
+        try {
 
             resultSet = statement.executeQuery(WRITER_GET_ALL);
 
@@ -207,12 +182,6 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
                 // одноразовый постлист
                 List<Post> posts = new ArrayList<>();
 
-                if (resultSet.getString(4) == null) {
-                    writer.setRegionName(new Region("регион не указан"));
-                } else {
-                    writer.setRegionName(new Region(resultSet.getString(4)));
-                }
-
                 // поиск двух или нескольких постов у одного писателя
                 if (idSet.add(resultSet.getLong(1))) {
 
@@ -221,7 +190,8 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
                     posts.add(new Post(resultSet.getString(5)));
 
                     writer = new Writer(resultSet.getLong(1), resultSet.getString(2),
-                            resultSet.getString(3), writer.getRegionName(), posts);
+                            resultSet.getString(3),
+                            new Region(resultSet.getString(4)), posts);
 
                     writerList.add(writer);
 

@@ -1,40 +1,50 @@
 package repository.jdbc;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 public class JdbcConnection {
 
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DATA_BASE_URL = "jdbc:mysql://localhost:3306/MySQL?useUnicode=true&serverTimezone=UTC";
-    private static final String USER = "Yhtyyar";
-    private static final String PASSWORD = "Ilyas-2009";
-
     private static Connection connection;
+    private static Statement statement;
 
-    public static synchronized Connection getConnection() {
+    public static synchronized Statement getConnection() {
+
+        Properties properties = new Properties();
+
+        try {
+            properties.load(new FileInputStream("src/main/resources/application.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (connection == null) {
 
             try {
-                Class.forName(JDBC_DRIVER);
+                Class.forName(properties.getProperty("driver"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                 connection = DriverManager.getConnection(DATA_BASE_URL, USER, PASSWORD);
+                 connection = DriverManager.getConnection(properties.getProperty("url"),
+                         properties.getProperty("username"), properties.getProperty("password"));
 
                  connection.createStatement(
                          ResultSet.TYPE_SCROLL_SENSITIVE,
                          ResultSet.CONCUR_UPDATABLE
                  );
 
+                  statement = connection.createStatement();
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
-        return connection;
+        return statement;
     }
 
 }

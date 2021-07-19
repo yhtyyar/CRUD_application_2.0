@@ -9,7 +9,11 @@ import java.util.List;
 
 public class RegionServiceImpl implements RegionService {
 
-    private final RegionRepository regionRepository = new JdbcRegionRepositoryImpl();
+    private final RegionRepository regionRepository;
+
+    public RegionServiceImpl() {
+        this.regionRepository = new JdbcRegionRepositoryImpl();
+    }
 
     @Override
     public Region getById(Long id) {
